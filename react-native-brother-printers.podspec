@@ -11,14 +11,14 @@ Pod::Spec.new do |s|
   s.description  = <<-DESC
                   The iOS portion of the wrapper for using brother printers with react native
                    DESC
-  s.homepage     = ""
+  s.homepage     = "https://github.com/derb21/react-native-brother-printers"
   # brief license entry:
   s.license      = "MIT"
   # optional - use expanded license entry instead:
   # s.license    = { :type => "MIT", :file => "LICENSE" }
-  s.authors      = { "Your Name" => "avery@dripos.com" }
+  s.authors      = { "Your Name" => "dillen.erb@omnisolutions.biz" }
   s.platforms    = { :ios => "9.0" }
-  s.source       = "";
+  s.source       = { :git => "https://github.com/derb21/react-native-brother-printers.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,c,cc,cpp,m,mm,swift,plist}"
   s.requires_arc = true
