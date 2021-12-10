@@ -17,8 +17,8 @@ Pod::Spec.new do |s|
   # optional - use expanded license entry instead:
   # s.license    = { :type => "MIT", :file => "LICENSE" }
   s.authors      = { "Your Name" => "dillen.erb@omnisolutions.biz" }
-  s.platforms    = { :ios => "9.0" }
-  s.source       = { :git => "https://github.com/derb21/react-native-brother-printers.git", :tag => "#{s.version}" }
+  s.platforms    = { :ios => "11.0" }
+  s.source       = { :git => "https://github.com/derb21/react-native-brother-printers.git"}
 
   s.source_files = "ios/**/*.{h,c,cc,cpp,m,mm,swift,plist}"
   s.requires_arc = true
