@@ -1,41 +1,16 @@
-// main index.js
 
-import {NativeModules, NativeEventEmitter} from "react-native";
+import {NativeModules, NativeEventEmitter, Platform} from "react-native";
 
 const {ReactNativeBrotherPrinters} = NativeModules;
 
+
 const {
-  discoverPrinters: _discoverPrinters,
-  pingPrinter: _pingPrinter,
   printImage: _printImage,
-  printPDF: _printPDF,
   testPrint: _testPrint,
 
 } = ReactNativeBrotherPrinters;
 
-/**
- * Starts the discovery process for brother printers
- *
- * @param params
- * @param params.V6             If we should searching using IP v6.
- * @param params.printerName    If we should name the printer something specific.
- *
- * @return {Promise<void>}
- */
-export async function discoverPrinters(params = {}) {
-  return _discoverPrinters(params);
-}
 
-/**
- * Checks if a reader is discoverable
- *
- * @param ip
- *
- * @return {Promise<void>}
- */
-export async function pingPrinter(ip) {
-  return _pingPrinter(ip);
-}
 
 /**
  * Prints an image
