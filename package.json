@@ -6,9 +6,9 @@
   "main": "index.js",
   "files": [
     "README.md",
-    "android",
     "index.js",
     "ios",
+    "ReactNativeBrotherPrinters.swift",
     "react-native-brother-printers.podspec"
   ],
   "scripts": {
@@ -16,8 +16,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Avery246813579/react-native-brother-printers.git",
-    "baseUrl": "https://github.com/Avery246813579/react-native-brother-printers"
+    "url": "git+https://github.com/derb21/react-native-brother-printers.git",
+    "baseUrl": "https://github.com/derb21/react-native-brother-printers.git"
   },
   "keywords": [
     "react-native",
@@ -26,8 +26,8 @@
     "printers"
   ],
   "author": {
-    "name": "Avery Durrant",
-    "email": "avery@dripos.com"
+    "name": "Dillen Erb",
+    "email": "dillenerb21@gmail.com"
   },
   "license": "MIT",
   "readmeFilename": "README.md",
