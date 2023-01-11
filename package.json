@@ -15,8 +15,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/react-native-bluetooth-brother-printers.git",
-    "baseUrl": "https://github.com/react-native-bluetooth-brother-printers.git"
+    "url": "git+https://github.com/derb21/react-native-brother-printers.git",
+    "baseUrl": "https://github.com/derb21/react-native-brother-printers.git"
   },
   "keywords": [
     "react-native",
