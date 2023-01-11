@@ -8,7 +8,6 @@
     "README.md",
     "index.js",
     "ios",
-    "ReactNativeBrotherPrinters.swift",
     "react-native-brother-printers.podspec"
   ],
   "scripts": {
