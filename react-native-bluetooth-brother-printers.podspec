@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => "9.0" }
   s.source       = { :git => "https://github.com/derb21/react-native-bluetooth-brother-printers.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,c,cc,cpp,m,mm,swift,plist}"
+s.source_files = "ios/*.{h,m,swift}"
   s.requires_arc = true
   s.resources = 'ios/**/*.plist'
 
