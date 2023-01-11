@@ -8,15 +8,15 @@
     "README.md",
     "index.js",
     "ios",
-    "react-native-brother-printers.podspec"
+    "react-native-bluetooth-brother-printers.podspec"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/derb21/react-native-brother-printers.git",
-    "baseUrl": "https://github.com/derb21/react-native-brother-printers.git"
+    "url": "git+https://github.com/react-native-bluetooth-brother-printers.git",
+    "baseUrl": "https://github.com/react-native-bluetooth-brother-printers.git"
   },
   "keywords": [
     "react-native",
