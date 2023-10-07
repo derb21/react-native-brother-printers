@@ -1,16 +1,11 @@
-
 import {NativeModules, NativeEventEmitter, Platform} from "react-native";
 
 const {ReactNativeBrotherPrinters} = NativeModules;
 
-
-const {
-  printImage: _printImage,
-  testPrint: _testPrint,
-
-} = ReactNativeBrotherPrinters;
-
-
+const _printImage =
+  Platform.OS === "ios" ? ReactNativeBrotherPrinters.printImage : () => {};
+const _testPrint =
+  Platform.OS === "ios" ? ReactNativeBrotherPrinters.testPrint : () => {};
 
 /**
  * Prints an image
@@ -22,10 +17,17 @@ const {
  * @return {Promise<*>}
  */
 export async function printImage(device, uri, deviceClass, pageSize) {
-  return _printImage(device, uri, deviceClass,pageSize);
+  return _printImage(device, uri, deviceClass, pageSize);
 }
 
-
+/**
+ * Test print
+ *
+ * @param device                  Device object
+ * @param deviceClass
+ * @param paperSize
+ * @return {Promise<*>}
+ */
 export async function testPrint(device, deviceClass, paperSize) {
   return _testPrint(device, deviceClass, paperSize);
 }
