@@ -22,7 +22,6 @@ Pod::Spec.new do |s|
 
 s.source_files = "ios/*.{h,m,swift}"
   s.requires_arc = true
-  s.resources = 'ios/**/*.plist'
 
   s.dependency "React"
   s.dependency "BRLMPrinterKit", "~> 4.13"

@@ -1,25 +1,4 @@
+// CocoaPods puts this header in the pod's umbrella header, which is how
+// ReactNativeBrotherPrinters.swift sees the React and BRLMPrinterKit types.
 #import <React/RCTBridgeModule.h>
-#import <BRLMPrinterKit/BRPtouchNetworkManager.h>
 #import <BRLMPrinterKit/BRLMPrinterKit.h>
-#import <React/RCTEventEmitter.h>
-
-
-
-@interface ReactNativeBrotherPrinters : RCTEventEmitter <RCTBridgeModule, BRPtouchNetworkDelegate> {
-
-    NSMutableArray *_brotherDeviceList;
-
-    BRPtouchNetworkManager    *_networkManager;
-
-    NSString *_imageStr;
-
-
-
-    bool hasListeners;
-
-}
-
-
-
-@end
-
