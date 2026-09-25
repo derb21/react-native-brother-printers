@@ -38,8 +38,7 @@ Both promises reject with one of these codes:
 |---|---|
 | `OPEN_CHANNEL_FAILED` | Could not connect to the printer |
 | `PRINTER_STATUS_FAILED` | Connected but could not read printer status |
-| `PRINTER_NOT_READY` | Printer reports no paper, cover open, battery empty, etc. |
 | `UNSUPPORTED_MODEL` | Connected printer is not an RJ model |
 | `INVALID_PRINT_SETTINGS` | Paper width not valid for this model |
-| `PRINT_FAILED` | The SDK reported a print error |
+| `PRINT_FAILED` | The SDK reported a print error; the message includes printer state such as no paper or cover open |
 | `INVALID_URI` / `TEST_IMAGE_MISSING` | Bad image path / `testPrint.jpg` not bundled |

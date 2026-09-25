@@ -52,13 +52,6 @@ class ReactNativeBrotherPrinters: NSObject {
                    nil)
             return
         }
-        if status.errorCode != .noError {
-            reject("PRINTER_NOT_READY",
-                   "Brother print: \(accessoryModel) reports \(describe(status.errorCode))",
-                   nil)
-            return
-        }
-
         guard let printSettings = BRLMRJPrintSettings(defaultPrintSettingsWith: status.model) else {
             reject("UNSUPPORTED_MODEL",
                    "Brother print: \(accessoryModel) (SDK model \(status.model.rawValue)) is not an RJ-series printer",
@@ -85,8 +78,9 @@ class ReactNativeBrotherPrinters: NSObject {
 
         let printError = printerDriver.printImage(with: imageURL, settings: printSettings)
         if printError.code != .noError {
+            let printerState = status.errorCode == .noError ? "" : " (printer reports \(describe(status.errorCode)))"
             reject("PRINT_FAILED",
-                   "Brother print failed on \(accessoryModel) (serial \(device)), error code \(printError.code.rawValue): \(printError.description)",
+                   "Brother print failed on \(accessoryModel) (serial \(device)), error code \(printError.code.rawValue): \(printError.description)\(printerState)",
                    nil)
             return
         }
