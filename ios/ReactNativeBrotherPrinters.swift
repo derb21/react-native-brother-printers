@@ -1,828 +1,115 @@
-
 import Foundation
-
 import UIKit
 
-import CoreImage
-
-import UniformTypeIdentifiers
-
-
-
 @objc(ReactNativeBrotherPrinters)
-
 class ReactNativeBrotherPrinters: NSObject {
 
-
-
     @objc
-
-//    @objc(discoverPrinters:callback:)
-
- func discoverPrinters(_ callback: RCTResponseSenderBlock) -> [BRPtouchDeviceInfo] {
-
-   // Date is ready to use!
-
-     print("DISCOVERINGPRINTERS")
-
-
-
-         let devices = BRPtouchBluetoothManager.shared().pairedDevices()
-
-     print("devices DISCOVER PRINTERS=",devices)
-
-//     print("devices DISCOVER PRINTERS.Optional=",devices.Optional)
-
-//     print("devices DISCOVER PRINTERS.Optional[0=",devices.Optional[0])
-
-
-
-     callback([NSNull(), [
-
-        "devices": devices?[0]
-
-         ]])
-
-         return devices as! [BRPtouchDeviceInfo]
-
-     
-
- }
-
-
-
-//    @available(iOS 13.0, *)
-
-    @objc
-
-    func printImage(_ device: String, uri printURI: String, deviceClass model:String, pageSize pageWidth:String) -> Void {
-
-        var errorString:String? = nil
-
-
-
-        let channel = BRLMChannel(bluetoothSerialNumber: device)
-
-        let generateResult = BRLMPrinterDriverGenerator.open(channel)
-
-        guard generateResult.error.code == BRLMOpenChannelErrorCode.noError,
-
-            let printerDriver = generateResult.driver else {
-
-                print("Error - Open Channel: \(generateResult.error.code)")
-
-                return
-
+    func printImage(_ device: String, uri printURI: String, deviceClass model: String, pageSize pageWidth: String,
+                    resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
+        guard let url = URL(string: printURI) else {
+            reject("INVALID_URI", "Brother print: invalid image URI \(printURI)", nil)
+            return
         }
-
-        defer {
-
-            printerDriver.closeChannel()
-
-        }
-
-                
-
-print("model=",model)
-
-        print("pageWidth=",pageWidth)
-
-
-
-        switch model {
-
-        case "RJ-4230B":
-
-            print("RJ-4230B=",model)
-
-
-
-            guard
-
-                let printSettings = BRLMRJPrintSettings(defaultPrintSettingsWith: .RJ_4230B)
-
-                else {
-
-                    print("Error - Image file is not found.")
-
-                    return
-
-            }
-
-            
-
-            errorString = checkPrinterStatus(printerDriver: printerDriver, expectedModel: printSettings.printerModel)
-
-            if errorString != nil
-
-            {
-
-                // cleanup and return error
-
-                printerDriver.closeChannel()
-
-                print("errorString check printer status",errorString)
-
-                return
-
-            }
-
-
-
-
-
-            
-
-            switch pageWidth {
-
-
-
-            case "288":
-
-                //CHANGING PAPER WIDTH SETTINGS TO 3"
-
-                let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-                let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 3.0,
-
-                                                            margins: margins,
-
-                                                            unitOfLength: .inch)
-
-                printSettings.customPaperSize = customPaperSize
-
-                
-
-            case "384":
-
-                //CHANGING PAPER WIDTH SETTINGS TO 4"
-
-                let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-                let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 4.0,
-
-                                                            margins: margins,
-
-                                                            unitOfLength: .inch)
-
-                printSettings.customPaperSize = customPaperSize
-
-                
-
-            default:
-
-                print("DEFAULT WIDTH CASE")
-
-            }
-
-            //CHANGING PAPER WIDTH SETTINGS
-
-//            let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-//            let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 4.0,
-
-//                                                        margins: margins,
-
-//                                                        unitOfLength: .inch)
-
-//            printSettings.customPaperSize = customPaperSize
-
-            
-
-
-
-            let validateErrorString:String? = validatePrintSettings(printSettings:printSettings)
-
-            
-
-        let url = URL(string: printURI)
-
-
-
-            let printError = printerDriver.printImage(with: url!, settings: printSettings)
-
-
-
-            
-
-
-
-            if printError.code != .noError {
-
-                print("Error - Print Image: \(printError.code)")
-
-                print("Error - Print Image, printError.description=: \(printError.description)")
-
-
-
-            }
-
-            else {
-
-                print("Success - Print Image")
-
-            }
-
-            
-
-        case "RJ-4030Ai":
-
-            print("RJ-4030Ai=",model)
-
-            guard
-
-                let printSettings = BRLMRJPrintSettings(defaultPrintSettingsWith: .rj_4030Ai)
-
-                else {
-
-                    print("Error - Image file is not found.")
-
-                    return
-
-            }
-
-            
-
-            errorString = checkPrinterStatus(printerDriver: printerDriver, expectedModel: printSettings.printerModel)
-
-            if errorString != nil
-
-            {
-
-                // cleanup and return error
-
-                printerDriver.closeChannel()
-
-                print("errorString check printer status",errorString)
-
-                return
-
-            }
-
-
-
-            switch pageWidth {
-
-        
-
-
-
-            case "288":
-
-                //CHANGING PAPER WIDTH SETTINGS TO 3"
-
-                let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-                let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 3.0,
-
-                                                            margins: margins,
-
-                                                            unitOfLength: .inch)
-
-                printSettings.customPaperSize = customPaperSize
-
-                
-
-            case "384":
-
-                //CHANGING PAPER WIDTH SETTINGS TO 4"
-
-                let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-                let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 4.0,
-
-                                                            margins: margins,
-
-                                                            unitOfLength: .inch)
-
-                printSettings.customPaperSize = customPaperSize
-
-                
-
-            default:
-
-                print("DEFAULT WIDTH CASE")
-
-            }
-
-            //CHANGING PAPER WIDTH SETTINGS
-
-//            let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-//            let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 4.0,
-
-//                                                        margins: margins,
-
-//                                                        unitOfLength: .inch)
-
-//            printSettings.customPaperSize = customPaperSize
-
-//
-
-            let validateErrorString:String? = validatePrintSettings(printSettings:printSettings)
-
-            
-
-        let url = URL(string: printURI)
-
-
-
-            let printError = printerDriver.printImage(with: url!, settings: printSettings)
-
-
-
-            
-
-
-
-            if printError.code != .noError {
-
-                print("Error - Print Image: \(printError.code)")
-
-                print("Error - Print Image, printError.description=: \(printError.description)")
-
-
-
-            }
-
-            else {
-
-                print("Success - Print Image")
-
-            }
-
-        default:
-
-            print("DEFAULT CASE")
-
-        }
-
-      
-
-      
-
-    
-
-      
-
-
-
+        printRJ(imageURL: url, device: device, accessoryModel: model, pageWidth: pageWidth, resolve: resolve, reject: reject)
     }
 
-    
-
     @objc
-
-    func testPrint(_ device: String, deviceClass model:String, pageSize pageWidth:String) -> Void {
-
-        var errorString:String? = nil
-
-
-
-        let channel = BRLMChannel(bluetoothSerialNumber: device)
-
-        let generateResult = BRLMPrinterDriverGenerator.open(channel)
-
-        guard generateResult.error.code == BRLMOpenChannelErrorCode.noError,
-
-            let printerDriver = generateResult.driver else {
-
-                print("Error - Open Channel: \(generateResult.error.code)")
-
-                return
-
+    func testPrint(_ device: String, deviceClass model: String, pageSize pageWidth: String,
+                   resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
+        guard let url = Bundle.main.url(forResource: "testPrint", withExtension: "jpg") else {
+            reject("TEST_IMAGE_MISSING", "Brother test print: testPrint.jpg is not in the app bundle", nil)
+            return
         }
-
-        defer {
-
-            printerDriver.closeChannel()
-
-        }
-
-                
-
-print("model=",model)
-
-        print("pageWidth=",pageWidth)
-
-
-
-        switch model {
-
-        case "RJ-4230B":
-
-            print("RJ-4230B=",model)
-
-
-
-            guard
-
-                let url = Bundle.main.url(forResource: "testPrint", withExtension: "jpg"),
-
-                let printSettings = BRLMRJPrintSettings(defaultPrintSettingsWith: .RJ_4230B)
-
-                else {
-
-                    print("Error - Image file is not found.")
-
-                    return
-
-            }
-
-            
-
-            errorString = checkPrinterStatus(printerDriver: printerDriver, expectedModel: printSettings.printerModel)
-
-            if errorString != nil
-
-            {
-
-                // cleanup and return error
-
-                printerDriver.closeChannel()
-
-                print("errorString check printer status",errorString)
-
-                return
-
-            }
-
-
-
-
-
-            
-
-            switch pageWidth {
-
-        
-
-                
-
-
-
-            case "288":
-
-                //CHANGING PAPER WIDTH SETTINGS TO 3"
-
-                let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-                let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 3.0,
-
-                                                            margins: margins,
-
-                                                            unitOfLength: .inch)
-
-                printSettings.customPaperSize = customPaperSize
-
-                
-
-            case "384":
-
-                //CHANGING PAPER WIDTH SETTINGS TO 4"
-
-                let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-                let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 4.0,
-
-                                                            margins: margins,
-
-                                                            unitOfLength: .inch)
-
-                printSettings.customPaperSize = customPaperSize
-
-                
-
-            default:
-
-                print("DEFAULT WIDTH CASE")
-
-            }
-
-           
-
-
-
-            let validateErrorString:String? = validatePrintSettings(printSettings:printSettings)
-
-            
-
-
-
-            let printError = printerDriver.printImage(with: url, settings: printSettings)
-
-
-
-            
-
-
-
-            if printError.code != .noError {
-
-                print("Error - Print Image: \(printError.code)")
-
-                print("Error - Print Image, printError.description=: \(printError.description)")
-
-
-
-            }
-
-            else {
-
-                print("Success - Print Image")
-
-            }
-
-            
-
-        case "RJ-4030Ai":
-
-            print("RJ-4030Ai=",model)
-
-            guard
-
-                let url = Bundle.main.url(forResource: "testPrint", withExtension: "jpg"),
-
-                let printSettings = BRLMRJPrintSettings(defaultPrintSettingsWith: .rj_4030Ai)
-
-                else {
-
-                    print("Error - Image file is not found.")
-
-                    return
-
-            }
-
-            
-
-            errorString = checkPrinterStatus(printerDriver: printerDriver, expectedModel: printSettings.printerModel)
-
-            if errorString != nil
-
-            {
-
-                // cleanup and return error
-
-                printerDriver.closeChannel()
-
-                print("errorString check printer status",errorString)
-
-                return
-
-            }
-
-
-
-            switch pageWidth {
-
- 
-
-
-
-            case "288":
-
-                //CHANGING PAPER WIDTH SETTINGS TO 3"
-
-                let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-                let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 3.0,
-
-                                                            margins: margins,
-
-                                                            unitOfLength: .inch)
-
-                printSettings.customPaperSize = customPaperSize
-
-                
-
-            case "384":
-
-                //CHANGING PAPER WIDTH SETTINGS TO 4"
-
-                let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
-
-                let customPaperSize = BRLMCustomPaperSize(rollWithTapeWidth: 4.0,
-
-                                                            margins: margins,
-
-                                                            unitOfLength: .inch)
-
-                printSettings.customPaperSize = customPaperSize
-
-                
-
-            default:
-
-                print("DEFAULT WIDTH CASE")
-
-            }
-
-    
-
-
-
-            let validateErrorString:String? = validatePrintSettings(printSettings:printSettings)
-
-            
-
-
-
-            let printError = printerDriver.printImage(with: url, settings: printSettings)
-
-
-
-            
-
-
-
-            if printError.code != .noError {
-
-                print("Error - Print Image: \(printError.code)")
-
-                print("Error - Print Image, printError.description=: \(printError.description)")
-
-
-
-            }
-
-            else {
-
-                print("Success - Print Image")
-
-            }
-
-        default:
-
-            print("DEFAULT CASE")
-
-        }
-
-      
-
-      
-
-    
-
-
-
+        printRJ(imageURL: url, device: device, accessoryModel: model, pageWidth: pageWidth, resolve: resolve, reject: reject)
     }
 
-    
-
-    
-
     @objc
-
     static func requiresMainQueueSetup() -> Bool {
-
-      return true
-
+        return false
     }
 
-
-
-    func checkPrinterStatus(printerDriver:BRLMPrinterDriver, expectedModel:BRLMPrinterModel) -> String?
-
-    {
-
-        print("checkPrinterStatus")
-
-        
-
-        let status:BRLMGetPrinterStatusResult = printerDriver.getPrinterStatus()
-
-        if status.error.code != .noError
-
-        {
-
-            var errorMsg = "checkPrinterStatus: Error getting status: \(status.error.description)"
-
-            // NOTE: Since BRLMGetStatusError is a subclass of BRLMError, it could potentially provide an "errorRecoverySuggestion".
-
-            // If so, let's add it to the message. So far, it seems that nothing is available here. must check for nil.
-
-            if status.error.errorRecoverySuggestion != nil {
-
-                errorMsg += "\nRecovery: \(status.error.errorRecoverySuggestion!)"
-
-            }
-
-            print(errorMsg)
-
-            
-
-            return errorMsg
-
-        } // if error getting status
-
-        else
-
-        {
-
-            // status was received OK. Now evaluate it.
-
-            
-
-            // Assure model connected matches the expectedModel.
-
-            // This assures that we won't send the wrong print data for the model.
-
-            // Also, this can serve as a "gate" to prevent using the app with compatible non-certified models.
-
-            if expectedModel != status.status?.model
-
-            {
-
-                let errorMsg = "checkPrinterStatus: Error - wrong model connected"
-
-                print(errorMsg)
-
-                
-
-                return errorMsg
-
-            }
-
-            
-
-            // TODO: Check other things by examining status and comparing against the Command Reference Guide
-
-            // These will be model-dependent, but the status response data is similar for most models.
-
-            // Ideally, SDK will add more capability to do this analysis for you and put it in the BRLMGetPrinterStatusResult.
-
-            // For now, I'll only validate the connected printer model per above.
-
-            
-
-        } // else status received OK
-
-        
-
-        return nil // nil means all OK
-
-        
-
-    } // checkPrinterStatus
-
-    
-
-    // *********************************************************
-
-    // validatePrintSettings
-
-    // -> This can be used primarily for DEBUG, to get more information about the cause of an error at print-time
-
-    // if it is related to print settings.
-
-    //
-
-    // RETURNS:
-
-    // * nil if no issues
-
-    // * error string if there are any significant issues
-
-    // *********************************************************
-
-    func validatePrintSettings(printSettings:BRLMPrintSettingsProtocol) -> String?
-
-    {
-
-        //*** Generate a BRLMValidatePrintSettingsReport by allowing SDK to evaluate the printSettings.
-
-        // NOTE:
-
-        // * if report.errorCount > 0, printing will fail. But, if we proceed to print anyway, we can get an error code as well and handle that error.
-
-        // * if report.warningCount > 0, there is an issue with settings, but the SDK will modify settings internally to print the job anyway.
-
-        // * if report.noticeCount > 0, there is an issue with settings, but it is non-fatal and SDK can print without any internal modifications.
-
-        // * In either case, you should investigate the settings and modify them as necessary.
-
-        let report:BRLMValidatePrintSettingsReport = BRLMValidatePrintSettings.validate(printSettings)
-
-        print("validatePrintSettings report:\n\(report.description)")
-
-        
-
-        if report.errorCount > 0 || report.warningCount > 0 || report.noticeCount > 0
-
-        {
-
-            // Allow caller to know there's a potential issue and add this to an alert if desired.
-
-            return report.description
-
+    // Settings come from the model the printer reports, so every RJ model the SDK knows prints.
+    private func printRJ(imageURL: URL, device: String, accessoryModel: String, pageWidth: String,
+                         resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+        let channel = BRLMChannel(bluetoothSerialNumber: device)
+        let generateResult = BRLMPrinterDriverGenerator.open(channel)
+        guard generateResult.error.code == BRLMOpenChannelErrorCode.noError,
+              let printerDriver = generateResult.driver else {
+            reject("OPEN_CHANNEL_FAILED",
+                   "Brother print: could not open channel to \(accessoryModel) (serial \(device)), error code \(generateResult.error.code.rawValue)",
+                   nil)
+            return
+        }
+        defer {
+            printerDriver.closeChannel()
         }
 
-        
+        let statusResult = printerDriver.getPrinterStatus()
+        guard statusResult.error.code == .noError, let status = statusResult.status else {
+            reject("PRINTER_STATUS_FAILED",
+                   "Brother print: could not read status from \(accessoryModel) (serial \(device)): \(statusResult.error.description)",
+                   nil)
+            return
+        }
+        if status.errorCode != .noError {
+            reject("PRINTER_NOT_READY",
+                   "Brother print: \(accessoryModel) reports \(describe(status.errorCode))",
+                   nil)
+            return
+        }
 
-        return nil // no issues
+        guard let printSettings = BRLMRJPrintSettings(defaultPrintSettingsWith: status.model) else {
+            reject("UNSUPPORTED_MODEL",
+                   "Brother print: \(accessoryModel) (SDK model \(status.model.rawValue)) is not an RJ-series printer",
+                   nil)
+            return
+        }
 
-    } // validatePrintSettings
+        switch pageWidth {
+        case "288":
+            printSettings.customPaperSize = rollPaper(widthInches: 3.0)
+        case "384":
+            printSettings.customPaperSize = rollPaper(widthInches: 4.0)
+        default:
+            break
+        }
 
- 
+        let report = BRLMValidatePrintSettings.validate(printSettings)
+        if report.errorCount > 0 {
+            reject("INVALID_PRINT_SETTINGS",
+                   "Brother print: settings rejected for \(accessoryModel) at pageWidth=\(pageWidth): \(report.description)",
+                   nil)
+            return
+        }
 
+        let printError = printerDriver.printImage(with: imageURL, settings: printSettings)
+        if printError.code != .noError {
+            reject("PRINT_FAILED",
+                   "Brother print failed on \(accessoryModel) (serial \(device)), error code \(printError.code.rawValue): \(printError.description)",
+                   nil)
+            return
+        }
+        resolve(nil)
+    }
+
+    private func rollPaper(widthInches: CGFloat) -> BRLMCustomPaperSize {
+        let margins = BRLMCustomPaperSizeMargins(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
+        return BRLMCustomPaperSize(rollWithTapeWidth: widthInches, margins: margins, unitOfLength: .inch)
+    }
+
+    private func describe(_ code: BRLMPrinterStatusErrorCode) -> String {
+        switch code {
+        case .noPaper: return "no paper"
+        case .coverOpen: return "cover open"
+        case .busy: return "busy"
+        case .paperJam: return "paper jam"
+        case .batteryEmpty: return "battery empty"
+        case .batteryTrouble: return "battery trouble"
+        case .highVoltageAdapter: return "high-voltage adapter"
+        case .unsupportedCharger: return "unsupported charger"
+        case .systemError: return "system error"
+        default: return "printer error \(code.rawValue)"
+        }
+    }
 }
