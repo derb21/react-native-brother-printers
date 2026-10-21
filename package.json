@@ -1,19 +1,19 @@
 {
   "name": "react-native-bluetooth-brother-printers",
   "title": "React Native Bluetooth Brother Printers",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A package that allows you to printer with brother printers",
   "main": "index.js",
   "files": [
     "README.md",
     "index.js",
     "ios/*.{h,m,swift}",
-    "ios/Resources",
+    "ios/Resources/testPrint.png",
     "scripts",
     "react-native-bluetooth-brother-printers.podspec"
   ],
   "scripts": {
-    "test": "python3 scripts/verify-package.py && python3 scripts/verify-package-files.py"
+    "test": "python3 scripts/verify-package.py && python3 scripts/verify-package-files.py && python3 scripts/verify-git-package.py"
   },
   "repository": {
     "type": "git",

@@ -4,13 +4,13 @@ React Native Bluetooth Brother Printers is a react-native module that will allow
 
 ## Getting started
 
-Install version 0.0.5 from its Git tag:
+Install version 0.0.6 from its Git tag:
 
-`$ npm install 'https://github.com/derb21/react-native-brother-printers.git#v0.0.5' --save`
+`$ npm install 'https://github.com/derb21/react-native-brother-printers.git#v0.0.6' --save`
 
 or 
 
-`$ yarn add 'react-native-bluetooth-brother-printers@https://github.com/derb21/react-native-brother-printers.git#v0.0.5'`
+`$ yarn add 'react-native-bluetooth-brother-printers@https://github.com/derb21/react-native-brother-printers.git#v0.0.6'`
 
 The npm registry version is separate from this Git release.
 
@@ -51,4 +51,6 @@ Both promises reject with one of these codes:
 
 ## Development checks
 
-Run `npm test` on macOS with Xcode command-line tools, CocoaPods and Python 3 installed. It checks the packed resource bundle and native status-error forwarding without sending a printer job. Physical printing still requires a paired printer.
+Run `npm test` on macOS with Xcode command-line tools, CocoaPods, Python 3 and Corepack installed. It checks the npm and Yarn 3.4.1 package contents, resource bundle and native status-error forwarding without sending a printer job. Physical printing still requires a paired printer.
+
+Version 0.0.6 corrects a Yarn Git packaging omission in 0.0.5. Both versions retain the RJ model detection, paper settings and print-failure behavior from 0.0.4.
