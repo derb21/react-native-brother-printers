@@ -21,6 +21,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/derb21/react-native-brother-printers.git", :tag => "v#{s.version}" }
 
 s.source_files = "ios/*.{h,m,swift}"
+  s.resource_bundles = { "BrotherPrinterResources" => ["ios/Resources/testPrint.png"] }
   s.requires_arc = true
 
   s.dependency "React"

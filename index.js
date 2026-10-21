@@ -28,7 +28,7 @@ export async function printImage(device, uri, deviceClass, pageSize) {
 }
 
 /**
- * Prints the bundled testPrint.jpg.
+ * Prints the package's bundled calibration image.
  *
  * @param device       EAAccessory serial number
  * @param deviceClass  accessory model, used in error messages

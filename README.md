@@ -4,11 +4,15 @@ React Native Bluetooth Brother Printers is a react-native module that will allow
 
 ## Getting started
 
-`$ npm install react-native-bluetooth-brother-printers --save`
+Install version 0.0.5 from its Git tag:
+
+`$ npm install 'https://github.com/derb21/react-native-brother-printers.git#v0.0.5' --save`
 
 or 
 
-`$ yarn add react-native-bluetooth-brother-printers`
+`$ yarn add 'react-native-bluetooth-brother-printers@https://github.com/derb21/react-native-brother-printers.git#v0.0.5'`
+
+The npm registry version is separate from this Git release.
 
 ### Mostly automatic installation
 
@@ -32,13 +36,19 @@ await printImage(accessory.serialNumber, fileUri, accessory.modelNumber, "384");
 await testPrint(accessory.serialNumber, accessory.modelNumber, "384");
 ```
 
+`testPrint` uses the package's calibration image. No image needs to be added to the host app. Run `pod install` and rebuild after updating so CocoaPods copies the resource bundle.
+
 Both promises reject with one of these codes:
 
 | Code | Meaning |
 |---|---|
 | `OPEN_CHANNEL_FAILED` | Could not connect to the printer |
-| `PRINTER_STATUS_FAILED` | Connected but could not read printer status |
+| `PRINTER_STATUS_FAILED` | Connected but could not read printer status; message and native error preserve SDK code 20001 (printer not found), 20002 (timeout), or an unexpected empty status |
 | `UNSUPPORTED_MODEL` | Connected printer is not an RJ model |
 | `INVALID_PRINT_SETTINGS` | Paper width not valid for this model |
 | `PRINT_FAILED` | The SDK reported a print error; the message includes printer state such as no paper or cover open |
-| `INVALID_URI` / `TEST_IMAGE_MISSING` | Bad image path / `testPrint.jpg` not bundled |
+| `INVALID_URI` / `TEST_IMAGE_MISSING` | Bad image path / package resource bundle missing |
+
+## Development checks
+
+Run `npm test` on macOS with Xcode command-line tools, CocoaPods and Python 3 installed. It checks the packed resource bundle and native status-error forwarding without sending a printer job. Physical printing still requires a paired printer.

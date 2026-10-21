@@ -17,8 +17,11 @@ class ReactNativeBrotherPrinters: NSObject {
     @objc
     func testPrint(_ device: String, deviceClass model: String, pageSize pageWidth: String,
                    resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
-        guard let url = Bundle.main.url(forResource: "testPrint", withExtension: "jpg") else {
-            reject("TEST_IMAGE_MISSING", "Brother test print: testPrint.jpg is not in the app bundle", nil)
+        guard let bundleURL = Bundle(for: ReactNativeBrotherPrinters.self)
+                .url(forResource: "BrotherPrinterResources", withExtension: "bundle"),
+              let resources = Bundle(url: bundleURL),
+              let url = resources.url(forResource: "testPrint", withExtension: "png") else {
+            reject("TEST_IMAGE_MISSING", "Brother test print: package test image is missing", nil)
             return
         }
         printRJ(imageURL: url, device: device, accessoryModel: model, pageWidth: pageWidth, resolve: resolve, reject: reject)
@@ -47,9 +50,18 @@ class ReactNativeBrotherPrinters: NSObject {
 
         let statusResult = printerDriver.getPrinterStatus()
         guard statusResult.error.code == .noError, let status = statusResult.status else {
-            reject("PRINTER_STATUS_FAILED",
-                   "Brother print: could not read status from \(accessoryModel) (serial \(device)): \(statusResult.error.description)",
-                   nil)
+            let cause: String
+            switch statusResult.error.code {
+            case .printerNotFound: cause = "printer not found"
+            case .timeout: cause = "status request timed out"
+            case .noError: cause = "SDK returned no printer status"
+            @unknown default: cause = "unknown status error"
+            }
+            let code = statusResult.error.code.rawValue
+            let message = "Brother print: could not read status from \(accessoryModel) (serial \(device)), SDK code \(code): \(cause)"
+            let error = NSError(domain: "BRLMGetStatusError", code: code,
+                                userInfo: [NSLocalizedDescriptionKey: message])
+            reject("PRINTER_STATUS_FAILED", message, error)
             return
         }
         guard let printSettings = BRLMRJPrintSettings(defaultPrintSettingsWith: status.model) else {
